@@ -8,14 +8,14 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AppFooter: typeof import('./src/components/AppFooter.vue')['default']
-    copy: typeof import('./src/components/TabletsIoModules copy.vue')['default']
+    copy: typeof import('./src/components/TabletsControllers.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     NavigationDrawer: typeof import('./src/components/NavigationDrawer.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Tablets: typeof import('./src/components/Tablets.vue')['default']
     TabletsController: typeof import('./src/components/Tablets.vue')['default']
+    TabletsControllers: typeof import('./src/components/TabletsControllers.vue')['default']
     TabletsIoModules: typeof import('./src/components/TabletsIoModules.vue')['default']
-    'TabletsIoModules copy': typeof import('./src/components/TabletsIoModules copy.vue')['default']
   }
 }

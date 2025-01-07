@@ -1,15 +1,9 @@
 <script setup>
-import TabletsIoModulesCopy from '@/components/TabletsIoModules copy.vue';
-
-
-
-
+import TabletsControllers from "@/components/TabletsControllers.vue";
 </script>
 
 <template>
-  <TabletsIoModulesCopy />
+  <TabletsControllers />
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

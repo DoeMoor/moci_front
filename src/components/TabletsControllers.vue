@@ -44,27 +44,7 @@
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
                       v-model="editedItem['controller_type_name'].String"
-                      label="Controller Type Name"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model.number="
-                        editedItem['io_module_socket_amount'].Int32
-                      "
-                      label="IO Module Socket Amount"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model="editedItem['project_name'].String"
-                      label="Project Name"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model="editedItem['description'].String"
-                      label="Description"
+                      label="Controller Type"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
@@ -75,20 +55,20 @@
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
-                      v-model.number="editedItem['pcb_version_number'].Int32"
-                      label="PCB Version Number"
+                      v-model="editedItem['manufacturer_name'].String"
+                      label="Manufacturer"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="4">
+                    <v-text-field
+                      v-model="editedItem['manufacturer_qr_code'].String"
+                      label="Manufacturer QR Code"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
                       v-model="editedItem['serial_number'].String"
                       label="Serial Number"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model="editedItem['manufacturer_name'].String"
-                      label="Manufacturer Name"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
@@ -106,7 +86,7 @@
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
                       v-model="editedItem['mini_pcie_modules_name'].String"
-                      label="Mini PCIe Modules Name"
+                      label="Mini PCIe Modules"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
@@ -118,7 +98,7 @@
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
                       v-model="editedItem['m2_module_name'].String"
-                      label="M.2 Module Name"
+                      label="M.2 Module"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
@@ -141,48 +121,65 @@
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
-                      v-model="editedItem['manufacturer_qr_code'].String"
-                      label="Manufacturer QR Code"
+                      v-model="editedItem['project_name'].String"
+                      label="Project Name"
                     ></v-text-field>
                   </v-col>
-                  <v-row>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-switch
-                        v-model="editedItem['can_1'].Bool"
-                        label="CAN 1"
-                      ></v-switch>
+                  <v-row cols="12" class="pa-3" no-gutters>
+                    <v-col cols="12" align-self="center" class="text-subtitle-1">
+                      CAN termination
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                      <v-switch
-                        v-model="editedItem['can_2'].Bool"
-                        label="CAN 2"
-                      ></v-switch>
+                      <v-checkbox
+                        hide-details
+                        v-model="editedItem['can_1_terminated'].Bool"
+                        label="CAN 1 terminated"
+                        dense
+                      ></v-checkbox>
+                      <v-checkbox
+                        hide-details
+                        v-model="editedItem['can_2_terminated'].Bool"
+                        label="CAN 2 terminated"
+                        dense
+                      ></v-checkbox>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                      <v-switch
-                        v-model="editedItem['can_3'].Bool"
-                        label="CAN 3"
-                      ></v-switch>
+                      <v-checkbox
+                        hide-details
+                        v-model="editedItem['can_3_terminated'].Bool"
+                        label="CAN 3 terminated"
+                        dense
+                      ></v-checkbox>
+                      <v-checkbox
+                        hide-details
+                        v-model="editedItem['can_4_terminated'].Bool"
+                        label="CAN 4 terminated"
+                        dense
+                      ></v-checkbox>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                      <v-switch
-                        v-model="editedItem['can_4'].Bool"
-                        label="CAN 4"
-                      ></v-switch>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-switch
+                      <v-checkbox
+                        hide-details
                         v-model="editedItem['usb'].Bool"
                         label="USB"
-                      ></v-switch>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-switch
+                        dense
+                      ></v-checkbox>
+                      <v-checkbox
+                        hide-details
                         v-model="editedItem['serial'].Bool"
                         label="Serial"
-                      ></v-switch>
+                        dense
+                      ></v-checkbox>
                     </v-col>
                   </v-row>
+                  <v-col cols="12">
+                    <v-textarea
+                      v-model="editedItem['description'].String"
+                      label="Description"
+                      auto-grow
+                      rows="4"
+                    ></v-textarea>
+                  </v-col>
                   <v-col cols="12">
                     <v-textarea
                       v-model="formattedPinout"
@@ -247,22 +244,22 @@ export default {
       display_adapters_id: null,
       article_number: { String: "", Valid: true },
       qr_code: { String: "", Valid: true },
-      can_1: { Bool: false, Valid: true },
-      can_2: { Bool: false, Valid: true },
-      can_3: { Bool: false, Valid: true },
-      can_4: { Bool: false, Valid: true },
+      can_1_terminated: { Bool: false, Valid: true },
+      can_2_terminated: { Bool: false, Valid: true },
+      can_3_terminated: { Bool: false, Valid: true },
+      can_4_terminated: { Bool: false, Valid: true },
       usb: { Bool: false, Valid: true },
       serial: { Bool: false, Valid: true },
       manufacturer_qr_code: { String: "", Valid: true },
       order_id: "",
-      slots_pinout_json: {
+      slot_pinout_json: {
         RawMessage: {},
         Valid: true,
       },
     });
     const defaultItem = { ...editedItem };
     const formattedPinout = computed(() =>
-      JSON.stringify(editedItem.slots_pinout_json.RawMessage, null, 2),
+      JSON.stringify(editedItem.slot_pinout_json.RawMessage, null, 2),
     );
 
     const headers = [
@@ -285,10 +282,10 @@ export default {
       { title: "Display Adapter ID", key: "display_adapters_id" },
       { title: "Article Number", key: "article_number.String" },
       { title: "QR Code", key: "qr_code.String" },
-      { title: "CAN 1", key: "can_1.Bool" },
-      { title: "CAN 2", key: "can_2.Bool" },
-      { title: "CAN 3", key: "can_3.Bool" },
-      { title: "CAN 4", key: "can_4.Bool" },
+      { title: "CAN 1", key: "can_1_terminated.Bool" },
+      { title: "CAN 2", key: "can_2_terminated.Bool" },
+      { title: "CAN 3", key: "can_3_terminated.Bool" },
+      { title: "CAN 4", key: "can_4_terminated.Bool" },
       { title: "USB", key: "usb.Bool" },
       { title: "Serial", key: "serial.Bool" },
       { title: "Manufacturer QR", key: "manufacturer_qr_code.String" },
@@ -298,7 +295,7 @@ export default {
       { title: "Is Deleted", key: "is_deleted.Bool" },
       {
         title: "Pinout",
-        key: "slots_pinout_json.RawMessage",
+        key: "slot_pinout_json.RawMessage",
         sortable: false,
         nowrap: true,
       },
