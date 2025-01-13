@@ -2,7 +2,7 @@
   <v-data-table
     v-model:selected="selected"
     :headers="headers"
-    :items="modules"
+    :items="controllers"
     :search="search"
     item-value="id"
     style="height: calc(100vh)"
@@ -30,7 +30,7 @@
         <v-dialog v-model="dialog">
           <template v-slot:activator="{ props }">
             <v-btn variant="tonal" color="primary" dark v-bind="props">
-              New IO Module
+              New controller
             </v-btn>
             <v-divider class="mx-4" inset vertical></v-divider>
           </template>
@@ -42,10 +42,13 @@
               <v-container>
                 <v-row>
                   <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model="editedItem['controller_type_name'].String"
+                    <v-autocomplete
+                      v-model="editedItem['controller_type_name']"
                       label="Controller Type"
-                    ></v-text-field>
+                      :items="controllerTypes"
+                      item-title="name"
+                      item-value="name"
+                    ></v-autocomplete>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
@@ -54,91 +57,103 @@
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model="editedItem['manufacturer_name'].String"
+                    <v-autocomplete
+                      v-model="editedItem['manufacturer_name']"
                       label="Manufacturer"
-                    ></v-text-field>
+                      :items="manufacturers"
+                      item-title="name.String"
+                      item-value="name.String"
+                    ></v-autocomplete>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
-                      v-model="editedItem['manufacturer_qr_code'].String"
+                      v-model="editedItem['manufacturer_qr_code']"
                       label="Manufacturer QR Code"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
-                      v-model="editedItem['serial_number'].String"
+                      v-model="editedItem['serial_number']"
                       label="Serial Number"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
-                      v-model="editedItem['mac_address'].String"
+                      v-model="editedItem['mac_address']"
                       label="MAC Address"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
-                      v-model="editedItem['sim_number'].String"
+                      v-model="editedItem['sim_number']"
                       label="SIM Number"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model="editedItem['mini_pcie_modules_name'].String"
-                      label="Mini PCIe Modules"
-                    ></v-text-field>
+                    <v-autocomplete
+                      v-model="editedItem['mini_pcie_modules_name']"
+                      label="Mini PCIe module"
+                      :items="miniPcieModulesTypes"
+                      :item-title="item => `${item.name} ${item.moduleTypeNumber}`"
+                      :item-value="item => `${item.name} ${item.moduleTypeNumber}`"
+                    ></v-autocomplete>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
-                      v-model="editedItem['mini_pcie_serial_number'].String"
+                      v-model="editedItem['mini_pcie_serial_number']"
                       label="Mini PCIe Serial Number"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
-                      v-model="editedItem['m2_module_name'].String"
+                      v-model="editedItem['m2_module_name']"
                       label="M.2 Module"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
-                      v-model.number="editedItem['m2_module_type_number'].Int32"
+                      v-model.number="editedItem['m2_module_type_number']"
                       label="M.2 Module Type Number"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
-                      v-model="editedItem['article_number'].String"
+                      v-model="editedItem['LED_board']"
+                      label="LED board qr code"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="4">
+                    <v-text-field
+                      v-model="editedItem['article_number']"
                       label="Article Number"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
-                      v-model="editedItem['qr_code'].String"
+                      v-model="editedItem['qr_code']"
                       label="QR Code"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
-                      v-model="editedItem['project_name'].String"
+                      v-model="editedItem['project_name']"
                       label="Project Name"
                     ></v-text-field>
                   </v-col>
-                  <v-row cols="12" class="pa-3" no-gutters>
-                    <v-col cols="12" align-self="center" class="text-subtitle-1">
+                  <v-row cols="12" class="pa-3">
+                    <v-col cols="12" align-self="center" class="text-h6">
                       CAN termination
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                       <v-checkbox
                         hide-details
-                        v-model="editedItem['can_1_terminated'].Bool"
+                        v-model="editedItem['can_1_terminated']"
                         label="CAN 1 terminated"
                         dense
                       ></v-checkbox>
                       <v-checkbox
                         hide-details
-                        v-model="editedItem['can_2_terminated'].Bool"
+                        v-model="editedItem['can_2_terminated']"
                         label="CAN 2 terminated"
                         dense
                       ></v-checkbox>
@@ -146,13 +161,13 @@
                     <v-col cols="12" sm="6" md="4">
                       <v-checkbox
                         hide-details
-                        v-model="editedItem['can_3_terminated'].Bool"
+                        v-model="editedItem['can_3_terminated']"
                         label="CAN 3 terminated"
                         dense
                       ></v-checkbox>
                       <v-checkbox
                         hide-details
-                        v-model="editedItem['can_4_terminated'].Bool"
+                        v-model="editedItem['can_4_terminated']"
                         label="CAN 4 terminated"
                         dense
                       ></v-checkbox>
@@ -160,13 +175,13 @@
                     <v-col cols="12" sm="6" md="4">
                       <v-checkbox
                         hide-details
-                        v-model="editedItem['usb'].Bool"
+                        v-model="editedItem['usb']"
                         label="USB"
                         dense
                       ></v-checkbox>
                       <v-checkbox
                         hide-details
-                        v-model="editedItem['serial'].Bool"
+                        v-model="editedItem['serial']"
                         label="Serial"
                         dense
                       ></v-checkbox>
@@ -174,7 +189,7 @@
                   </v-row>
                   <v-col cols="12">
                     <v-textarea
-                      v-model="editedItem['description'].String"
+                      v-model="editedItem['description']"
                       label="Description"
                       auto-grow
                       rows="4"
@@ -214,99 +229,105 @@
 </template>
 
 <script>
+
 import { ref, reactive, computed, onMounted } from "vue";
 
 export default {
   setup() {
+    const miniPcieModulesTypes = ref([]);
+    const manufacturers = ref([]);
+    const controllerTypes = ref([]);
+
     const search = ref("");
     const selected = ref([]);
     const dialog = ref(false);
-    const modules = ref([]);
+    const controllers = ref([]);
     const editedIndex = ref(-1);
     const loading = ref(true);
     const editedItem = reactive({
-      id: "",
-      controller_type_name: { String: "", Valid: true },
-      io_module_socket_amount: { Int32: 0, Valid: true },
-      project_name: { String: "", Valid: true },
-      description: { String: "", Valid: true },
-      pcb_hw_version: "",
-      pcb_version_number: { Int32: 0, Valid: true },
-      serial_number: { String: "", Valid: true },
-      manufacturer_name: { String: "", Valid: true },
-      assembly_date: { Time: "0001-01-01T00:00:00Z", Valid: false },
-      mac_address: { String: "", Valid: true },
-      sim_number: { String: "", Valid: true },
-      mini_pcie_modules_name: { String: "", Valid: true },
-      mini_pcie_serial_number: { String: "", Valid: true },
-      m2_module_name: { String: "", Valid: true },
-      m2_module_type_number: { Int32: 0, Valid: true },
+      id: null,
+      controller_type_name: null,
+      io_module_socket_amount: null,
+      project_name: null,
+      description: null,
+      pcb_hw_version: null,
+      pcb_version_number: null,
+      serial_number: null,
+      manufacturer_name: null,
+      assembly_date: null,
+      mac_address: null,
+      sim_number: null,
+      mini_pcie_modules_name: null,
+      mini_pcie_serial_number: null,
+      m2_module_name: null,
+      m2_module_type_number: null,
+      LED_board: null,
       display_adapters_id: null,
-      article_number: { String: "", Valid: true },
-      qr_code: { String: "", Valid: true },
-      can_1_terminated: { Bool: false, Valid: true },
-      can_2_terminated: { Bool: false, Valid: true },
-      can_3_terminated: { Bool: false, Valid: true },
-      can_4_terminated: { Bool: false, Valid: true },
-      usb: { Bool: false, Valid: true },
-      serial: { Bool: false, Valid: true },
-      manufacturer_qr_code: { String: "", Valid: true },
-      order_id: "",
+      article_number: null,
+      qr_code: null,
+      can_1_terminated: null,
+      can_2_terminated: null,
+      can_3_terminated: null,
+      can_4_terminated: null,
+      usb: null,
+      serial: null,
+      manufacturer_qr_code: null,
+      order_id: null,
       slot_pinout_json: {
         RawMessage: {},
-        Valid: true,
       },
     });
     const defaultItem = { ...editedItem };
+    
     const formattedPinout = computed(() =>
       JSON.stringify(editedItem.slot_pinout_json.RawMessage, null, 2),
     );
 
     const headers = [
-      { title: "ID", key: "id" },
+      // { title: "ID", key: "id" },
       { title: "Controller Type", key: "controller_type_name.String" },
-      { title: "IO Module Sockets", key: "io_module_socket_amount.Int32" },
+      { title: "PCB HW Version", key: "pcb_hw_version" },
+      { title: "Serial Number", key: "serial_number.String" },
       { title: "Project", key: "project_name.String" },
       { title: "Description", key: "description.String" },
-      { title: "PCB HW Version", key: "pcb_hw_version" },
-      { title: "PCB Version", key: "pcb_version_number.Int32" },
-      { title: "Serial Number", key: "serial_number.String" },
-      { title: "Manufacturer", key: "manufacturer_name.String" },
-      { title: "Assembly Date", key: "assembly_date.Time" },
-      { title: "MAC Address", key: "mac_address.String" },
-      { title: "SIM Number", key: "sim_number.String" },
-      { title: "Mini PCIe Module", key: "mini_pcie_modules_name.String" },
-      { title: "Mini PCIe Serial", key: "mini_pcie_serial_number.String" },
-      { title: "M2 Module", key: "m2_module_name.String" },
-      { title: "M2 Module Type", key: "m2_module_type_number.Int32" },
-      { title: "Display Adapter ID", key: "display_adapters_id" },
       { title: "Article Number", key: "article_number.String" },
-      { title: "QR Code", key: "qr_code.String" },
-      { title: "CAN 1", key: "can_1_terminated.Bool" },
-      { title: "CAN 2", key: "can_2_terminated.Bool" },
-      { title: "CAN 3", key: "can_3_terminated.Bool" },
-      { title: "CAN 4", key: "can_4_terminated.Bool" },
-      { title: "USB", key: "usb.Bool" },
-      { title: "Serial", key: "serial.Bool" },
-      { title: "Manufacturer QR", key: "manufacturer_qr_code.String" },
+      { title: "Display Adapter ID", key: "display_adapters_id" },
+      { title: "Assembly Date", key: "assembly_date.Time" },
       { title: "Order ID", key: "order_id" },
-      { title: "Created At", key: "created_at.Time" },
-      { title: "Updated At", key: "updated_at.Time" },
-      { title: "Is Deleted", key: "is_deleted.Bool" },
-      {
-        title: "Pinout",
-        key: "slot_pinout_json.RawMessage",
-        sortable: false,
-        nowrap: true,
-      },
+      { title: "Manufacturer QR", key: "manufacturer_qr_code.String" },
+      // { title: "IO Module Sockets", key: "io_module_socket_amount.Int32" },
+      // { title: "No. of PCB Version", key: "pcb_version_number.Int32" },
+      // { title: "Manufacturer", key: "manufacturer_name.String" },
+      // { title: "MAC Address", key: "mac_address.String" },
+      // { title: "SIM Number", key: "sim_number.String" },
+      // { title: "Mini PCIe Module", key: "mini_pcie_modules_name.String" },
+      // { title: "Mini PCIe Serial", key: "mini_pcie_serial_number.String" },
+      // { title: "M2 Module", key: "m2_module_name.String" },
+      // { title: "LED Board qr code", key: "LED_board.String" },
+      // { title: "QR Code", key: "qr_code.String" },
+      // { title: "CAN 1", key: "can_1_terminated.Bool" },
+      // { title: "CAN 2", key: "can_2_terminated.Bool" },
+      // { title: "CAN 3", key: "can_3_terminated.Bool" },
+      // { title: "CAN 4", key: "can_4_terminated.Bool" },
+      // { title: "USB", key: "usb.Bool" },
+      // { title: "Serial", key: "serial.Bool" },
+      // { title: "Created At", key: "created_at.Time" },
+      // { title: "Updated At", key: "updated_at.Time" },
+      // { title: "Is Deleted", key: "is_deleted.Bool" },
+      // {
+      //   title: "Pinout",
+      //   key: "slot_pinout_json.RawMessage",
+      //   sortable: false,
+      //   nowrap: true,
+      // },
       { title: "Actions", key: "actions", sortable: false },
     ];
 
     const formTitle = computed(() =>
-      editedIndex.value === -1 ? "New Module" : "Edit Module",
+      editedIndex.value === -1 ? "New Controller" : "Edit Controller",
     );
 
-    async function fetchModules() {
+    async function fetchControllers() {
       loading.value = true;
       try {
         const response = await fetch("http://localhost:8081/api/controllers");
@@ -314,25 +335,67 @@ export default {
           throw new Error("Network response was not ok");
         }
         const data = await response.json();
-        modules.value = data;
+        controllers.value = data;
       } catch (error) {
-        console.error("Error fetching modules:", error);
-        // You might want to show an error message to the user here
+        console.error("Error fetching controllers:", error);
+        // show an error message to the user here or not..:(
       } finally {
         loading.value = false;
       }
     }
 
+    async function fetchAllControllerTypes() {
+      try {
+        const response = await fetch(
+          "http://localhost:8081/api/controllers/types",
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        controllerTypes.value = data;
+      } catch (error) {
+        console.error("Error fetching ControllerTypes:", error);
+        // You might want to show an error message to the user here
+      }
+    }
+
+    async function fetchAllManufacturers() {
+      try {
+        const response = await fetch("http://localhost:8081/api/manufacturers");
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        manufacturers.value = data;
+      } catch (error) {
+        console.error("Error fetching Manufacturers:", error);
+      }
+    }
+
+    async function fetchPCIeModulesTypes() {
+      try {
+        const response = await fetch("http://localhost:8081/api/miniPcieModules/types");
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        miniPcieModulesTypes.value = data;
+      } catch (error) {
+        console.error("Error fetching miniPcieModulesTypes:", error);
+      }
+    }
+
     function editItem(item) {
-      editedIndex.value = modules.value.indexOf(item);
+      editedIndex.value = controllers.value.indexOf(item);
       Object.assign(editedItem, item);
       dialog.value = true;
     }
 
     function deleteItem(item) {
-      const index = modules.value.indexOf(item);
+      const index = controllers.value.indexOf(item);
       confirm("Are you sure you want to delete this item?") &&
-        modules.value.splice(index, 1);
+        controllers.value.splice(index, 1);
     }
 
     function close() {
@@ -343,22 +406,25 @@ export default {
 
     function save() {
       if (editedIndex.value > -1) {
-        Object.assign(modules.value[editedIndex.value], editedItem);
+        Object.assign(controllers.value[editedIndex.value], editedItem);
       } else {
-        modules.value.push({ ...editedItem, id: crypto.randomUUID() });
+        controllers.value.push({ ...editedItem, id: crypto.randomUUID() });
       }
       close();
     }
 
     onMounted(() => {
-      fetchModules();
+      fetchControllers();
+      fetchAllControllerTypes();
+      fetchAllManufacturers();
+      fetchPCIeModulesTypes();
     });
 
     return {
       search,
       selected,
       dialog,
-      modules,
+      controllers,
       editedIndex,
       editedItem,
       defaultItem,
@@ -370,6 +436,10 @@ export default {
       close,
       save,
       formattedPinout,
+      
+      controllerTypes,
+      manufacturers,
+      miniPcieModulesTypes,
     };
   },
 };
