@@ -94,8 +94,12 @@
                       v-model="editedItem['mini_pcie_modules_name']"
                       label="Mini PCIe module"
                       :items="miniPcieModulesTypes"
-                      :item-title="item => `${item.name} ${item.moduleTypeNumber}`"
-                      :item-value="item => `${item.name} ${item.moduleTypeNumber}`"
+                      :item-title="
+                        (item) => `${item.name} ${item.moduleTypeNumber}`
+                      "
+                      :item-value="
+                        (item) => `${item.name} ${item.moduleTypeNumber}`
+                      "
                     ></v-autocomplete>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
@@ -105,16 +109,17 @@
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
-                    <v-text-field
+                    <v-autocomplete
+                      :items="m2ModuleTypes"
                       v-model="editedItem['m2_module_name']"
                       label="M.2 Module"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model.number="editedItem['m2_module_type_number']"
-                      label="M.2 Module Type Number"
-                    ></v-text-field>
+                      :item-title="
+                        (item) => `${item.name} ${item.moduleTypeNumber}`
+                      "
+                      :item-value="
+                        (item) => `${item.name} ${item.moduleTypeNumber}`
+                      "
+                    ></v-autocomplete>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
@@ -229,7 +234,6 @@
 </template>
 
 <script>
-
 import { ref, reactive, computed, onMounted } from "vue";
 
 export default {
@@ -237,6 +241,7 @@ export default {
     const miniPcieModulesTypes = ref([]);
     const manufacturers = ref([]);
     const controllerTypes = ref([]);
+    const m2ModuleTypes = ref([]);
 
     const search = ref("");
     const selected = ref([]);
@@ -278,48 +283,22 @@ export default {
       },
     });
     const defaultItem = { ...editedItem };
-    
+
     const formattedPinout = computed(() =>
       JSON.stringify(editedItem.slot_pinout_json.RawMessage, null, 2),
     );
 
     const headers = [
-      // { title: "ID", key: "id" },
-      { title: "Controller Type", key: "controller_type_name.String" },
-      { title: "PCB HW Version", key: "pcb_hw_version" },
-      { title: "Serial Number", key: "serial_number.String" },
-      { title: "Project", key: "project_name.String" },
-      { title: "Description", key: "description.String" },
-      { title: "Article Number", key: "article_number.String" },
-      { title: "Display Adapter ID", key: "display_adapters_id" },
-      { title: "Assembly Date", key: "assembly_date.Time" },
-      { title: "Order ID", key: "order_id" },
-      { title: "Manufacturer QR", key: "manufacturer_qr_code.String" },
-      // { title: "IO Module Sockets", key: "io_module_socket_amount.Int32" },
-      // { title: "No. of PCB Version", key: "pcb_version_number.Int32" },
-      // { title: "Manufacturer", key: "manufacturer_name.String" },
-      // { title: "MAC Address", key: "mac_address.String" },
-      // { title: "SIM Number", key: "sim_number.String" },
-      // { title: "Mini PCIe Module", key: "mini_pcie_modules_name.String" },
-      // { title: "Mini PCIe Serial", key: "mini_pcie_serial_number.String" },
-      // { title: "M2 Module", key: "m2_module_name.String" },
-      // { title: "LED Board qr code", key: "LED_board.String" },
-      // { title: "QR Code", key: "qr_code.String" },
-      // { title: "CAN 1", key: "can_1_terminated.Bool" },
-      // { title: "CAN 2", key: "can_2_terminated.Bool" },
-      // { title: "CAN 3", key: "can_3_terminated.Bool" },
-      // { title: "CAN 4", key: "can_4_terminated.Bool" },
-      // { title: "USB", key: "usb.Bool" },
-      // { title: "Serial", key: "serial.Bool" },
-      // { title: "Created At", key: "created_at.Time" },
-      // { title: "Updated At", key: "updated_at.Time" },
-      // { title: "Is Deleted", key: "is_deleted.Bool" },
-      // {
-      //   title: "Pinout",
-      //   key: "slot_pinout_json.RawMessage",
-      //   sortable: false,
-      //   nowrap: true,
-      // },
+      { title: "Controller Type", key: "ControllerTypeName" },
+      { title: "PCB HW Version", key: "PcbHwVersion" },
+      { title: "Controller Serial Number", key: "ControllerSerialNumber" },
+      { title: "Project", key: "ProjectName" },
+      { title: "Description", key: "Description" },
+      { title: "Article Number", key: "ArticleNumber" },
+      { title: "Display Adapter Type", key: "DisplayType" },
+      { title: "Assembly Date", key: "AssemblyDate" },
+      { title: "Order ID", key: "OrderID" },
+      { title: "Controller Manufacturer QR", key: "ControllerManufacturerQrCodes" },
       { title: "Actions", key: "actions", sortable: false },
     ];
 
@@ -356,7 +335,6 @@ export default {
         controllerTypes.value = data;
       } catch (error) {
         console.error("Error fetching ControllerTypes:", error);
-        // You might want to show an error message to the user here
       }
     }
 
@@ -373,9 +351,26 @@ export default {
       }
     }
 
-    async function fetchPCIeModulesTypes() {
+    async function fetchAllM2ModulesTypes() {
       try {
-        const response = await fetch("http://localhost:8081/api/miniPcieModules/types");
+        const response = await fetch(
+          "http://localhost:8081/api/m2Modules/types",
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        m2ModuleTypes.value = data;
+      } catch (error) {
+        console.error("Error fetching m2ModuleTypes:", error);
+      }
+    }
+
+    async function fetchAllPCIeModulesTypes() {
+      try {
+        const response = await fetch(
+          "http://localhost:8081/api/miniPcieModules/types",
+        );
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -417,7 +412,8 @@ export default {
       fetchControllers();
       fetchAllControllerTypes();
       fetchAllManufacturers();
-      fetchPCIeModulesTypes();
+      fetchAllPCIeModulesTypes();
+      fetchAllM2ModulesTypes();
     });
 
     return {
@@ -436,10 +432,11 @@ export default {
       close,
       save,
       formattedPinout,
-      
+
       controllerTypes,
       manufacturers,
       miniPcieModulesTypes,
+      m2ModuleTypes,
     };
   },
 };
