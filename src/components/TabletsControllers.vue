@@ -1,12 +1,14 @@
 <template>
   <v-data-table
-    v-model:selected="selected"
+    v-model="selected"
     :headers="headers"
     :items="controllers"
     :search="search"
     item-value="id"
     style="height: calc(100vh)"
     show-select
+    hover
+    sticky
     multi-sort
     :loading="loading"
   >
@@ -15,6 +17,7 @@
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
         <v-text-field
+          clearable
           v-model="search"
           density="compact"
           label="Search"
@@ -43,7 +46,8 @@
                 <v-row>
                   <v-col cols="12" sm="6" md="4">
                     <v-autocomplete
-                      v-model="editedItem['controller_type_name']"
+                      clearable
+                      v-model="editedItem['controllerTypeName']"
                       label="Controller Type"
                       :items="controllerTypes"
                       item-title="name"
@@ -51,14 +55,19 @@
                     ></v-autocomplete>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model="editedItem['pcb_hw_version']"
+                    <v-autocomplete
+                      clearable
+                      v-model="editedItem['pcbHwVersion']"
                       label="PCB HW Version"
-                    ></v-text-field>
+                      :items="controllersPcbHwVersions"
+                      item-title="fullVersion"
+                      item-value="fullVersion"
+                    ></v-autocomplete>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-autocomplete
-                      v-model="editedItem['manufacturer_name']"
+                      clearable
+                      v-model="editedItem['manufacturerName']"
                       label="Manufacturer"
                       :items="manufacturers"
                       item-title="name.String"
@@ -67,81 +76,83 @@
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
-                      v-model="editedItem['manufacturer_qr_code']"
+                      clearable
+                      v-model="editedItem['controllerManufacturerQrCodes']"
                       label="Manufacturer QR Code"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
-                      v-model="editedItem['serial_number']"
+                      clearable
+                      v-model="editedItem['controllerSerialNumber']"
                       label="Serial Number"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
-                      v-model="editedItem['mac_address']"
+                      clearable
+                      v-model="editedItem['macAddress']"
                       label="MAC Address"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
-                      v-model="editedItem['sim_number']"
+                      clearable
+                      v-model="editedItem['simNumber']"
                       label="SIM Number"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-autocomplete
-                      v-model="editedItem['mini_pcie_modules_name']"
+                      clearable
+                      v-model="editedItem['miniPcieModulesName']"
                       label="Mini PCIe module"
                       :items="miniPcieModulesTypes"
-                      :item-title="
-                        (item) => `${item.name} ${item.moduleTypeNumber}`
-                      "
-                      :item-value="
-                        (item) => `${item.name} ${item.moduleTypeNumber}`
-                      "
+                      item-title="fullName"
+                      item-value="fullName"
                     ></v-autocomplete>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
-                      v-model="editedItem['mini_pcie_serial_number']"
+                      clearable
+                      v-model="editedItem['miniPcieSerialNumber']"
                       label="Mini PCIe Serial Number"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-autocomplete
                       :items="m2ModuleTypes"
-                      v-model="editedItem['m2_module_name']"
+                      v-model="editedItem['m2ModuleName']"
                       label="M.2 Module"
-                      :item-title="
-                        (item) => `${item.name} ${item.moduleTypeNumber}`
-                      "
-                      :item-value="
-                        (item) => `${item.name} ${item.moduleTypeNumber}`
-                      "
+                      item-title="fullName"
+                      item-value="fullName"
                     ></v-autocomplete>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
-                      v-model="editedItem['LED_board']"
+                      clearable
+                      v-model="editedItem['ledBoard']"
                       label="LED board qr code"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
-                      v-model="editedItem['article_number']"
+                      clearable
+                      v-model="editedItem['articleNumber']"
                       label="Article Number"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
-                      v-model="editedItem['qr_code']"
+                      clearable
+                      v-model="editedItem['controllerInfoQrCode']"
                       label="QR Code"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
-                      v-model="editedItem['project_name']"
+                      clearable
+                      v-model="editedItem['projectName']"
                       label="Project Name"
                     ></v-text-field>
                   </v-col>
@@ -152,13 +163,13 @@
                     <v-col cols="12" sm="6" md="4">
                       <v-checkbox
                         hide-details
-                        v-model="editedItem['can_1_terminated']"
+                        v-model="editedItem['can1Terminated']"
                         label="CAN 1 terminated"
                         dense
                       ></v-checkbox>
                       <v-checkbox
                         hide-details
-                        v-model="editedItem['can_2_terminated']"
+                        v-model="editedItem['can2Terminated']"
                         label="CAN 2 terminated"
                         dense
                       ></v-checkbox>
@@ -166,13 +177,13 @@
                     <v-col cols="12" sm="6" md="4">
                       <v-checkbox
                         hide-details
-                        v-model="editedItem['can_3_terminated']"
+                        v-model="editedItem['can3Terminated']"
                         label="CAN 3 terminated"
                         dense
                       ></v-checkbox>
                       <v-checkbox
                         hide-details
-                        v-model="editedItem['can_4_terminated']"
+                        v-model="editedItem['can4Terminated']"
                         label="CAN 4 terminated"
                         dense
                       ></v-checkbox>
@@ -242,6 +253,7 @@ export default {
     const manufacturers = ref([]);
     const controllerTypes = ref([]);
     const m2ModuleTypes = ref([]);
+    const controllersPcbHwVersions = ref([]);
 
     const search = ref("");
     const selected = ref([]);
@@ -251,54 +263,59 @@ export default {
     const loading = ref(true);
     const editedItem = reactive({
       id: null,
-      controller_type_name: null,
-      io_module_socket_amount: null,
-      project_name: null,
+      controllerTypeName: null,
+      ioModuleSocketAmount: null,
+      projectName: null,
       description: null,
-      pcb_hw_version: null,
-      pcb_version_number: null,
-      serial_number: null,
-      manufacturer_name: null,
-      assembly_date: null,
-      mac_address: null,
-      sim_number: null,
-      mini_pcie_modules_name: null,
-      mini_pcie_serial_number: null,
-      m2_module_name: null,
-      m2_module_type_number: null,
-      LED_board: null,
-      display_adapters_id: null,
-      article_number: null,
-      qr_code: null,
-      can_1_terminated: null,
-      can_2_terminated: null,
-      can_3_terminated: null,
-      can_4_terminated: null,
+      pcbHwVersion: null,
+      pcbVersionNumber: null,
+      controllerSerialNumber: null,
+      manufacturerName: null,
+      assemblyDate: null,
+      macAddress: null,
+      simNumber: null,
+      miniPcieModulesName: null,
+      miniPcieModuleTypeNumber: null,
+      miniPcieSerialNumber: null,
+      m2ModuleName: null,
+      m2ModuleTypeNumber: null,
+      ledBoard: null,
+      displayType: null,
+      displayManufacturerQrCode: null,
+      articleNumber: null,
+      controllerInfoQrCode: null,
+      can1Terminated: null,
+      can2Terminated: null,
+      can3Terminated: null,
+      can4Terminated: null,
       usb: null,
       serial: null,
-      manufacturer_qr_code: null,
-      order_id: null,
-      slot_pinout_json: {
+      controllerManufacturerQrCodes: null,
+      orderId: null,
+      slotPinoutJson: {
         RawMessage: {},
       },
     });
     const defaultItem = { ...editedItem };
 
     const formattedPinout = computed(() =>
-      JSON.stringify(editedItem.slot_pinout_json.RawMessage, null, 2),
+      JSON.stringify(editedItem.slotPinoutJson.RawMessage, null, 2),
     );
 
     const headers = [
-      { title: "Controller Type", key: "ControllerTypeName" },
-      { title: "PCB HW Version", key: "PcbHwVersion" },
-      { title: "Controller Serial Number", key: "ControllerSerialNumber" },
-      { title: "Project", key: "ProjectName" },
-      { title: "Description", key: "Description" },
-      { title: "Article Number", key: "ArticleNumber" },
-      { title: "Display Adapter Type", key: "DisplayType" },
-      { title: "Assembly Date", key: "AssemblyDate" },
-      { title: "Order ID", key: "OrderID" },
-      { title: "Controller Manufacturer QR", key: "ControllerManufacturerQrCodes" },
+      { title: "Controller Type", key: "controllerTypeName" },
+      { title: "PCB HW Version", key: "pcbHwVersion" },
+      { title: "Controller Serial Number", key: "controllerSerialNumber" },
+      { title: "Project", key: "projectName" },
+      { title: "Description", key: "description" },
+      { title: "Article Number", key: "articleNumber" },
+      { title: "Display Adapter Type", key: "displayType" },
+      { title: "Assembly Date", key: "assemblyDate" },
+      { title: "Order ID", key: "orderID" },
+      {
+        title: "Controller Manufacturer QR",
+        key: "controllerManufacturerQrCodes",
+      },
       { title: "Actions", key: "actions", sortable: false },
     ];
 
@@ -381,6 +398,21 @@ export default {
       }
     }
 
+    async function fetchAllControllersPcbHwVersions() {
+      try {
+        const response = await fetch(
+          "http://localhost:8081/api/controllers/pcbHwVersions",
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        controllersPcbHwVersions.value = data;
+      } catch (error) {
+        console.error("Error fetching controllersPcbHwVersions:", error);
+      }
+    }
+
     function editItem(item) {
       editedIndex.value = controllers.value.indexOf(item);
       Object.assign(editedItem, item);
@@ -414,6 +446,7 @@ export default {
       fetchAllManufacturers();
       fetchAllPCIeModulesTypes();
       fetchAllM2ModulesTypes();
+      fetchAllControllersPcbHwVersions();
     });
 
     return {
@@ -437,6 +470,7 @@ export default {
       manufacturers,
       miniPcieModulesTypes,
       m2ModuleTypes,
+      controllersPcbHwVersions,
     };
   },
 };

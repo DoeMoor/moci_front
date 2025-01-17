@@ -8,6 +8,8 @@
     style="height: calc(100vh)"
     show-select
     multi-sort
+    hover
+    sticky
     :loading="loading"
   >
     <template v-slot:top>
