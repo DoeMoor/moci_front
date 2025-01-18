@@ -29,7 +29,7 @@
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog">
           <template v-slot:activator="{ props }">
-            <v-btn variant="tonal" color="primary" dark v-bind="props">
+            <v-btn :loading="loading" variant="tonal" color="primary" dark v-bind="props">
               New Controller
             </v-btn>
             <v-divider class="mx-4" inset vertical></v-divider>

@@ -37,7 +37,7 @@
             </v-btn>
             <v-divider class="mx-4" inset vertical></v-divider>
           </template>
-          <v-card>
+          <v-card :loading="loading">
             <v-card-title>
               <span class="text-h5">{{ formTitle }}</span>
             </v-card-title>
@@ -189,18 +189,13 @@
                       ></v-checkbox>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                      <v-checkbox
-                        hide-details
-                        v-model="editedItem['usb']"
-                        label="USB"
-                        dense
-                      ></v-checkbox>
-                      <v-checkbox
-                        hide-details
-                        v-model="editedItem['serial']"
-                        label="Serial"
-                        dense
-                      ></v-checkbox>
+                      <v-radio-group
+                        v-model="connectionType"
+                        label="Connection type"
+                      >
+                        <v-radio label="USB" :value="'usb'"></v-radio>
+                        <v-radio label="Serial" :value="'serial'"></v-radio>
+                      </v-radio-group>
                     </v-col>
                   </v-row>
                   <v-col cols="12">
@@ -212,12 +207,23 @@
                     ></v-textarea>
                   </v-col>
                   <v-col cols="12">
-                    <v-textarea
-                      v-model="formattedPinout"
-                      label="Pinout JSON"
-                      auto-grow
-                      rows="4"
-                    ></v-textarea>
+                    <v-expansion-panels >
+                      <v-expansion-panel >
+                        <v-expansion-panel-title
+                          >PINOUT</v-expansion-panel-title
+                        >
+                        <v-expansion-panel-text>
+                          <!--TODO: add highlight -->
+                          <v-textarea
+                            v-model="formattedPinout"
+                            label="Pinout JSON"
+                            readonly
+                            auto-grow
+                            rows="4"
+                          ></v-textarea>
+                        </v-expansion-panel-text>
+                      </v-expansion-panel>
+                    </v-expansion-panels>
                   </v-col>
                 </v-row>
               </v-container>
@@ -245,7 +251,7 @@
 </template>
 
 <script>
-import { ref, reactive, computed, onMounted } from "vue";
+import { ref, reactive, computed, onMounted, watch } from "vue";
 
 export default {
   setup() {
@@ -254,6 +260,12 @@ export default {
     const controllerTypes = ref([]);
     const m2ModuleTypes = ref([]);
     const controllersPcbHwVersions = ref([]);
+
+    const pinoutID = ref(null);
+    const typePinout = ref(null);
+    const formattedPinout = ref("");
+    const connectionType = ref("");
+    const isFormDataLoaded = ref(false);
 
     const search = ref("");
     const selected = ref([]);
@@ -292,15 +304,16 @@ export default {
       serial: null,
       controllerManufacturerQrCodes: null,
       orderId: null,
-      slotPinoutJson: {
-        RawMessage: {},
-      },
+      slotPinoutJson: {},
     });
     const defaultItem = { ...editedItem };
 
-    const formattedPinout = computed(() =>
-      JSON.stringify(editedItem.slotPinoutJson.RawMessage, null, 2),
-    );
+    const updateFormattedPinout = () => {
+      formattedPinout.value = typePinout.value
+        ? JSON.stringify(typePinout.value, null, 2)
+        : "";
+      typePinout.value = null;
+    };
 
     const headers = [
       { title: "Controller Type", key: "controllerTypeName" },
@@ -323,7 +336,46 @@ export default {
       editedIndex.value === -1 ? "New Controller" : "Edit Controller",
     );
 
-    async function fetchControllers() {
+    watch(connectionType, connectionTypeSelection);
+
+    function connectionTypeSelection() {
+      if (connectionType.value === "usb") {
+        editedItem.usb = true;
+        editedItem.serial = false;
+      } else if (connectionType.value === "serial") {
+        editedItem.usb = false;
+        editedItem.serial = true;
+      }
+    }
+
+    async function fetchControllersTypePinout() {
+      try {
+        pinoutID.value = controllerTypes.value.find(
+          (type) => type.name === editedItem.controllerTypeName,
+        )?.id;
+
+        if (!pinoutID.value) {
+          updateFormattedPinout();
+          return null;
+        }
+
+        const response = await fetch(
+          `http://localhost:8081/api/controllers/types/pinout/${pinoutID.value}`,
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        typePinout.value = data;
+        updateFormattedPinout();
+      } catch (error) {
+        console.error("Error fetching ControllerTypesPinout:", error);
+      }
+    }
+
+    watch(() => editedItem.controllerTypeName, fetchControllersTypePinout);
+
+    async function fetchAllControllers() {
       loading.value = true;
       try {
         const response = await fetch("http://localhost:8081/api/controllers");
@@ -429,6 +481,10 @@ export default {
       dialog.value = false;
       editedIndex.value = -1;
       Object.assign(editedItem, defaultItem);
+      pinoutID.value = null;
+      typePinout.value = null;
+      formattedPinout.value = "";
+      connectionType.value = "";
     }
 
     function save() {
@@ -440,13 +496,25 @@ export default {
       close();
     }
 
+    watch(dialog, async (newValue) => {
+      if (newValue && !isFormDataLoaded.value) {
+        try {
+          await Promise.all([
+            fetchAllControllerTypes(),
+            fetchAllManufacturers(),
+            fetchAllPCIeModulesTypes(),
+            fetchAllM2ModulesTypes(),
+            fetchAllControllersPcbHwVersions(),
+          ]);
+          isFormDataLoaded.value = true;
+        } catch (error) {
+          console.error("Error loading form data:", error);
+        }
+      }
+    });
+
     onMounted(() => {
-      fetchControllers();
-      fetchAllControllerTypes();
-      fetchAllManufacturers();
-      fetchAllPCIeModulesTypes();
-      fetchAllM2ModulesTypes();
-      fetchAllControllersPcbHwVersions();
+      fetchAllControllers();
     });
 
     return {
@@ -471,6 +539,10 @@ export default {
       miniPcieModulesTypes,
       m2ModuleTypes,
       controllersPcbHwVersions,
+      pinoutID,
+      typePinout,
+      connectionType,
+      isFormDataLoaded,
     };
   },
 };
