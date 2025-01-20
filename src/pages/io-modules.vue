@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <TabletsIoModules />
+  <IoModulesDataTable />
 </template>
 
 <style scoped></style>

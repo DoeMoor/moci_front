@@ -7,11 +7,10 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ControllerDataTable: typeof import('./src/components/ControllerDataTable.vue')['default']
+    IoModulesDataTable: typeof import('./src/components/IoModulesDataTable.vue')['default']
     NavigationDrawer: typeof import('./src/components/NavigationDrawer.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    Tablets: typeof import('./src/components/Tablets.vue')['default']
-    TabletsControllers: typeof import('./src/components/TabletsControllers.vue')['default']
-    TabletsIoModules: typeof import('./src/components/TabletsIoModules.vue')['default']
   }
 }

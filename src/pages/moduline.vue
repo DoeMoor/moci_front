@@ -1,9 +1,9 @@
 <script setup>
-import TabletsControllers from "@/components/TabletsControllers.vue";
+import ControllerDataTable from "@/components/ControllerDataTable.vue";
 </script>
 
 <template>
-  <TabletsControllers />
+  <ControllerDataTable />
 </template>
 
 <style scoped></style>
