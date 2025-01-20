@@ -9,6 +9,7 @@
 import { createRouter, createWebHistory } from 'vue-router/auto'
 import { routes } from 'vue-router/auto-routes'
 import Moduline from '../pages/moduline.vue'
+import NotFound from '../pages/NotFound.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -20,6 +21,12 @@ router.addRoute({
   alias: ["/"],
   name: "moduline",
   component: Moduline,
+});
+
+router.addRoute({
+  path: "/:pathMatch(.*)*",
+  name: "not-found",
+  component: NotFound,
 });
 
 // Workaround for https://github.com/vitejs/vite/issues/11804

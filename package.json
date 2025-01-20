@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "buildModules": "vite build --outDir ./../moci_back/src/web/ --emptyOutDir",
+    "buildModule": "vite build --outDir ./../moci_back/src/web/ --emptyOutDir",
     "preview": "vite preview",
     "lint": "eslint . --fix"
   },
