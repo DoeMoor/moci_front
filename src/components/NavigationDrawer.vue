@@ -49,11 +49,5 @@ const items = ref([
     link: true,
     to: '/customer',
   },
-  {
-    title: 'help',
-    prependIcon: 'mdi-calendar',
-    link: true,
-    to: '/help',
-  },
 ])
 </script>

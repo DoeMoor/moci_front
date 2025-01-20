@@ -1,11 +1,12 @@
 
 /**
- * router/index.ts
+ * src/router/index.js
  *
  * Automatic routes for `./src/pages/*.vue`
  */
 
 // Composables
+import Moduline from '@/pages/moduline.vue'
 import { createRouter, createWebHistory } from 'vue-router/auto'
 import { routes } from 'vue-router/auto-routes'
 
@@ -13,6 +14,13 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
 })
+
+router.addRoute({
+  path: "/moduline",
+  alias: ["/"],
+  name: "moduline",
+  component: Moduline,
+});
 
 // Workaround for https://github.com/vitejs/vite/issues/11804
 router.onError((err, to) => {
