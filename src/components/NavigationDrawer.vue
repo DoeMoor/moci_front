@@ -1,12 +1,31 @@
 <template>
-  <v-navigation-drawer permanent rail expand-on-hover>
-    <v-list selectable item-props :items="items" nav />
+  <v-navigation-drawer
+    permanent
+    rail
+    expand-on-hover
+  >
+    <v-list
+      selectable
+      item-props
+      :items="items"
+      nav
+    />
   
     <template #append>
       <v-list>
-        <v-list-item class="ma-2" link nav prepend-icon="mdi-cog-outline" title="Settings" />
-        <v-list-item @click="toggleTheme" class="ma-2" nav>
-          <template v-slot:prepend>
+        <v-list-item
+          class="ma-2"
+          link
+          nav
+          prepend-icon="mdi-cog-outline"
+          title="Settings"
+        />
+        <v-list-item
+          class="ma-2"
+          nav
+          @click="toggleTheme"
+        >
+          <template #prepend>
             <v-icon :icon="isDark ? 'mdi-weather-sunny' : 'mdi-weather-night'" />
           </template>
           <v-list-item-title>{{ isDark ? 'Light Mode' : 'Dark Mode' }}</v-list-item-title>
@@ -28,7 +47,7 @@ const toggleTheme = () => {
   theme.global.name.value = isDark.value ? 'light' : 'dark'
 }
 
-const drawer = ref(true)
+// const drawer = ref(true)
 
 const items = ref([
   {
