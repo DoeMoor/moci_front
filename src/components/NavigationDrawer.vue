@@ -52,14 +52,14 @@ const toggleTheme = () => {
 const items = ref([
   {
     title: 'Controller',
-    prependIcon: 'mdi-land-rows-vertical',
+    // prependIcon: 'mdi-land-rows-vertical',
+    prependIcon: 'mdi-raspberry-pi',
     link: true,
     to: '/controller',
   },
   {
     title: 'Io-modules',
-    prependIcon: 'mdi-raspberry-pi',
-    // prependIcon: 'mdi-expansion-card',
+    prependIcon: 'mdi-expansion-card',
     link: true,
     to: '/io-modules',
   },
@@ -69,11 +69,11 @@ const items = ref([
     link: true,
     to: '/customer',
   },
-  {
-    title: 'Manufacturer',
-    prependIcon: 'mdi-factory',
-    link: true,
-    to: '/',
-  },
+  // {
+  //   title: 'Manufacturer',
+  //   prependIcon: 'mdi-factory',
+  //   link: true,
+  //   to: '/',
+  // },
 ])
 </script>

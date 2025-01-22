@@ -14,11 +14,7 @@
   >
     <template #top>
       <v-toolbar flat>
-        <v-divider
-          class="mx-4"
-          inset
-          vertical
-        />
+        <v-divider class="mx-4" inset vertical />
         <v-spacer />
         <v-text-field
           v-model="search"
@@ -32,32 +28,16 @@
           hide-details
           style="width: 100%"
         />
-        <v-divider
-          class="mx-4"
-          inset
-          vertical
-        />
+        <v-divider class="mx-4" inset vertical />
         <v-spacer />
         <v-dialog v-model="dialog">
           <template #activator="{ props }">
-            <v-btn
-              variant="tonal"
-              color="primary"
-              dark
-              v-bind="props"
-            >
+            <v-btn variant="tonal" color="primary" dark v-bind="props">
               New controller
             </v-btn>
-            <v-divider
-              class="mx-4"
-              inset
-              vertical
-            />
+            <v-divider class="mx-4" inset vertical />
           </template>
-          <v-card
-            class="d-flex flex-column"
-            :loading="loading"
-          >
+          <v-card class="d-flex flex-column" :loading="loading">
             <v-card-title>
               <span class="text-h5">{{ formTitle }}</span>
             </v-card-title>
@@ -65,215 +45,153 @@
             <v-card-text class="flex-grow-1 overflow-y-auto">
               <v-container>
                 <v-row>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
+                  <v-col cols="12" sm="6" md="4">
                     <v-autocomplete
-                      v-model="editedItem['controllerTypeName']"
+                      v-model="editedItem['controllerTypeID']"
                       clearable
                       label="Controller Type"
                       :items="controllerTypes"
                       item-title="name"
-                      item-value="name"
+                      item-value="id"
                     />
                   </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
+                  <v-col cols="12" sm="6" md="4">
                     <v-autocomplete
-                      v-model="editedItem['pcbHwVersion']"
+                      v-model="editedItem['pcbHwVersionID']"
                       clearable
                       label="PCB HW Version"
                       :items="controllersPcbHwVersions"
                       item-title="fullVersion"
-                      item-value="fullVersion"
+                      item-value="id"
                     />
                   </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
+                  <v-col cols="12" sm="6" md="4">
                     <v-autocomplete
-                      v-model="editedItem['manufacturerName']"
+                      v-model="editedItem['manufacturerID']"
                       clearable
                       label="Manufacturer"
                       :items="manufacturers"
-                      item-title="name.String"
-                      item-value="name.String"
+                      item-title="name"
+                      item-value="id"
                     />
                   </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
+                  <v-col cols="12" sm="6" md="4">
                     <v-text-field
                       v-model="editedItem['controllerManufacturerQrCodes']"
                       clearable
                       label="Manufacturer QR Code"
                     />
                   </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
+                  <v-col cols="12" sm="6" md="4">
                     <v-text-field
                       v-model="editedItem['controllerSerialNumber']"
                       clearable
                       label="Serial Number"
                     />
                   </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
+                  <v-col cols="12" sm="6" md="4">
                     <v-text-field
                       v-model="editedItem['macAddress']"
                       clearable
                       label="MAC Address"
                     />
                   </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
+                  <v-col cols="12" sm="6" md="4">
                     <v-text-field
                       v-model="editedItem['encloserSerialNumber']"
                       clearable
                       label="Encloser Serial Number"
                     />
                   </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
+                  <v-col cols="12" sm="6" md="4">
                     <v-autocomplete
-                      v-model="editedItem['encloserManufacturerName']"
+                      v-model="editedItem['encloserManufacturerID']"
                       clearable
                       :items="manufacturers"
-                      item-title="name.String"
-                      item-value="name.String"
+                      item-title="name"
+                      item-value="id"
                       label="Encloser Manufacturer Name"
                     />
                   </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
+                  <v-col cols="12" sm="6" md="4">
                     <v-text-field
                       v-model="editedItem['simNumber']"
                       clearable
                       label="SIM Number"
                     />
                   </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
+                  <v-col cols="12" sm="6" md="4">
                     <v-autocomplete
-                      v-model="editedItem['miniPcieModulesName']"
+                      v-model="editedItem['miniPcieModulesID']"
                       clearable
                       label="Mini PCIe module"
                       :items="miniPcieModulesTypes"
                       item-title="fullName"
-                      item-value="fullName"
+                      item-value="id"
                     />
                   </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
+                  <v-col cols="12" sm="6" md="4">
                     <v-text-field
                       v-model="editedItem['miniPcieSerialNumber']"
                       clearable
                       label="Mini PCIe Serial Number"
                     />
                   </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
+                  <v-col cols="12" sm="6" md="4">
                     <v-autocomplete
-                      v-model="editedItem['m2ModuleName']"
+                      v-model="editedItem['m2ModuleTypeID']"
                       :items="m2ModuleTypes"
                       label="M.2 Module"
                       item-title="fullName"
-                      item-value="fullName"
+                      item-value="id"
                     />
                   </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
+                  <v-col cols="12" sm="6" md="4">
                     <v-text-field
-                      v-model="editedItem['ledBoard']"
+                      v-model="editedItem['ledBoardQrCode']"
                       clearable
                       label="LED board qr code"
                     />
                   </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
+                  <v-col cols="12" sm="6" md="4">
                     <v-text-field
                       v-model="editedItem['articleNumber']"
                       clearable
                       label="Article Number"
                     />
                   </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
+                  <v-col cols="12" sm="6" md="4">
                     <v-text-field
                       v-model="editedItem['controllerInfoQrCode']"
                       clearable
                       label="QR Code"
                     />
                   </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem['projectName']"
+                  <v-col cols="12" sm="6" md="4">
+                    <v-autocomplete
+                      v-model="editedItem['projectID']"
+                      :items="projects"
                       clearable
                       label="Project Name"
+                      item-title="name"
+                      item-value="id"
                     />
                   </v-col>
-                  <v-row
-                    cols="12"
-                    class="pa-3"
-                  >
-                    <v-col
-                      cols="12"
-                      align-self="center"
-                      class="text-h6"
-                    >
+                  <v-col cols="12" sm="6" md="4">
+                    <v-autocomplete
+                      v-model="editedItem['customerID']"
+                      :items="customers"
+                      clearable
+                      label="Customer Name"
+                      item-title="name"
+                      item-value="id"
+                    />
+                  </v-col>
+                  <v-row cols="12" class="pa-3">
+                    <v-col cols="12" align-self="center" class="text-h6">
                       CAN termination
                     </v-col>
-                    <v-col
-                      cols="12"
-                      sm="6"
-                      md="4"
-                    >
+                    <v-col cols="12" sm="6" md="4">
                       <v-checkbox
                         v-model="editedItem['can1Terminated']"
                         hide-details
@@ -287,11 +205,7 @@
                         dense
                       />
                     </v-col>
-                    <v-col
-                      cols="12"
-                      sm="6"
-                      md="4"
-                    >
+                    <v-col cols="12" sm="6" md="4">
                       <v-checkbox
                         v-model="editedItem['can3Terminated']"
                         hide-details
@@ -305,23 +219,13 @@
                         dense
                       />
                     </v-col>
-                    <v-col
-                      cols="12"
-                      sm="6"
-                      md="4"
-                    >
+                    <v-col cols="12" sm="6" md="4">
                       <v-radio-group
                         v-model="connectionType"
                         label="Connection type"
                       >
-                        <v-radio
-                          label="USB"
-                          :value="'usb'"
-                        />
-                        <v-radio
-                          label="Serial"
-                          :value="'serial'"
-                        />
+                        <v-radio label="USB" :value="'usb'" />
+                        <v-radio label="Serial" :value="'serial'" />
                       </v-radio-group>
                     </v-col>
                   </v-row>
@@ -357,11 +261,7 @@
             </v-card-text>
             <v-card-actions>
               <v-spacer />
-              <v-btn
-                color="blue-darken-1"
-                variant="text"
-                @click="close"
-              >
+              <v-btn color="blue-darken-1" variant="text" @click="close">
                 Cancel
               </v-btn>
               <v-btn
@@ -371,11 +271,7 @@
               >
                 Save and continue
               </v-btn>
-              <v-btn
-                color="blue-darken-1"
-                variant="text"
-                @click="save"
-              >
+              <v-btn color="blue-darken-1" variant="text" @click="save">
                 Save
               </v-btn>
             </v-card-actions>
@@ -384,19 +280,10 @@
       </v-toolbar>
     </template>
     <template #[`item.actions`]="{ item }">
-      <v-icon
-        size="small"
-        class="me-2"
-        @click="editItem(item)"
-      >
+      <v-icon size="small" class="me-2" @click="editItem(item)">
         mdi-pencil
       </v-icon>
-      <v-icon
-        size="small"
-        @click="deleteItem(item)"
-      >
-        mdi-delete
-      </v-icon>
+      <v-icon size="small" @click="deleteItem(item)"> mdi-delete </v-icon>
     </template>
   </v-data-table>
 </template>
@@ -411,6 +298,8 @@ export default {
     const controllerTypes = ref([]);
     const m2ModuleTypes = ref([]);
     const controllersPcbHwVersions = ref([]);
+    const projects = ref([]);
+    const customers = ref([]);
 
     const pinoutID = ref(null);
     const typePinout = ref(null);
@@ -426,26 +315,22 @@ export default {
     const loading = ref(true);
     const editedItem = reactive({
       id: null,
-      controllerTypeName: null,
-      ioModuleSocketAmount: null,
-      projectName: null,
+      controllerTypeID: null,
+      projectID: null,
       description: null,
-      pcbHwVersion: null,
-      pcbVersionNumber: null,
+      pcbHwVersionID: null,
       controllerSerialNumber: null,
-      manufacturerName: null,
+      manufacturerID: null,
       assemblyDate: null,
       macAddress: null,
       simNumber: null,
       encloserSerialNumber: null,
-      encloserManufacturerName: null,
-      miniPcieModulesName: null,
-      miniPcieModuleTypeNumber: null,
+      encloserManufacturerID: null,
+      miniPcieModulesID: null,
       miniPcieSerialNumber: null,
-      m2ModuleName: null,
-      m2ModuleTypeNumber: null,
-      ledBoard: null,
-      displayType: null,
+      m2ModuleTypeID: null,
+      ledBoardQrCode: null,
+      displayTypeID: null,
       displayManufacturerQrCode: null,
       articleNumber: null,
       controllerInfoQrCode: null,
@@ -456,14 +341,15 @@ export default {
       usb: null,
       serial: null,
       controllerManufacturerQrCodes: null,
-      orderId: null,
+      orderID: null,
+      customerID: null,
       slotPinoutJson: {},
     });
     const defaultItem = { ...editedItem };
 
     const headers = [
       { title: "Controller Type", key: "controllerTypeName" },
-      { title: "PCB HW Version", key: "pcbHwVersion" },
+      { title: "Controller PCB HW Version", key: "pcbHwVersion" },
       { title: "Controller Serial Number", key: "controllerSerialNumber" },
       { title: "Project", key: "projectName" },
       { title: "Description", key: "description" },
@@ -493,12 +379,10 @@ export default {
       }
     }
 
-    watch(() => editedItem.controllerTypeName, fetchControllersTypePinout);
+    watch(() => editedItem.controllerTypeID, fetchControllersTypePinout);
     async function fetchControllersTypePinout() {
       try {
-        pinoutID.value = controllerTypes.value.find(
-          (type) => type.name === editedItem.controllerTypeName,
-        )?.id;
+        pinoutID.value = editedItem.controllerTypeID
 
         if (!pinoutID.value) {
           updateFormattedPinout();
@@ -567,6 +451,30 @@ export default {
         manufacturers.value = data;
       } catch (error) {
         console.error("Error fetching Manufacturers:", error);
+      }
+    }
+    async function fetchAllProjects() {
+      try {
+        const response = await fetch("http://localhost:8081/api/projects");
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        projects.value = data;
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      }
+    }
+    async function fetchAllCustomers() {
+      try {
+        const response = await fetch("http://localhost:8081/api/customers");
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        customers.value = data;
+      } catch (error) {
+        console.error("Error fetching customers:", error);
       }
     }
 
@@ -663,6 +571,8 @@ export default {
             fetchAllPCIeModulesTypes(),
             fetchAllM2ModulesTypes(),
             fetchAllControllersPcbHwVersions(),
+            fetchAllProjects(),
+            fetchAllCustomers(),
           ]);
           isFormDataLoaded.value = true;
         } catch (error) {
@@ -703,6 +613,8 @@ export default {
       typePinout,
       connectionType,
       isFormDataLoaded,
+      customers,
+      projects,
     };
   },
 };
