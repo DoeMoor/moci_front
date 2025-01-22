@@ -8,7 +8,7 @@
 // Composables
 import { createRouter, createWebHistory } from 'vue-router/auto'
 import { routes } from 'vue-router/auto-routes'
-import Moduline from '../pages/moduline.vue'
+import controller from "../pages/controller.vue";
 import NotFound from '../pages/NotFound.vue'
 
 const router = createRouter({
@@ -17,10 +17,10 @@ const router = createRouter({
 })
 
 router.addRoute({
-  path: "/moduline",
+  path: "/controller",
   alias: ["/"],
-  name: "moduline",
-  component: Moduline,
+  name: "controller",
+  component: controller,
 });
 
 router.addRoute({

@@ -51,22 +51,29 @@ const toggleTheme = () => {
 
 const items = ref([
   {
-    title: 'moduline',
-    prependIcon: 'mdi-view-dashboard-outline',
+    title: 'Controller',
+    prependIcon: 'mdi-land-rows-vertical',
     link: true,
-    to: '/moduline',
+    to: '/controller',
   },
   {
-    title: 'io-modules',
-    prependIcon: 'mdi-account-group',
+    title: 'Io-modules',
+    prependIcon: 'mdi-raspberry-pi',
+    // prependIcon: 'mdi-expansion-card',
     link: true,
     to: '/io-modules',
   },
   {
-    title: 'customer',
+    title: 'Customer',
     prependIcon: 'mdi-briefcase-outline',
     link: true,
     to: '/customer',
+  },
+  {
+    title: 'Manufacturer',
+    prependIcon: 'mdi-factory',
+    link: true,
+    to: '/',
   },
 ])
 </script>
