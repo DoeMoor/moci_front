@@ -181,7 +181,7 @@
                     md="4"
                   >
                     <v-autocomplete
-                      v-model="editedItem.miniPcie.modulesId"
+                      v-model="editedItem.miniPcie.typeId"
                       clearable
                       label="Mini PCIe module"
                       :items="miniPcieModulesTypes"
@@ -503,7 +503,7 @@ export default {
         manufacturerId: null,
       },
       miniPcie: {
-        modulesId: null,
+        typeId: null,
         serialNumber: null,
       },
       ledBoardQrCode: null,
