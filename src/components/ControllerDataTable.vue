@@ -447,6 +447,7 @@ import { ref, reactive, computed, onMounted, watch } from "vue";
 
 export default {
   setup() {
+    const apiUrl = "http://localhost:8081/api";
     const miniPcieModulesTypes = ref([]);
     const manufacturers = ref([]);
     const controllerTypes = ref([]);
@@ -509,7 +510,48 @@ export default {
       ledBoardQrCode: null,
       slotPinoutJson: {},
     });
-    const defaultItem = { ...editedItem };
+    const defaultItem = {
+      customerId: null,
+      controller: {
+        typesId: null,
+        projectsId: null,
+        description: null,
+        pcbHwVersionsId: null,
+        m2ModulesTypesId: null,
+        serialNumber: null,
+        manufacturersId: null,
+        assemblyDate: null,
+        macAddress: null,
+        simNumber: null,
+        articleNumber: null,
+        infoQrCode: null,
+        usb: false,
+        serial: false,
+        manufacturerQrCode: null,
+        orderId: null,
+      },
+      canTermination: {
+        can1Terminated: false,
+        can2Terminated: false,
+        can3Terminated: false,
+        can4Terminated: false,
+      },
+      display: {
+        typeId: null,
+        manufacturerQrCode: null,
+      },
+      encloser: {
+        serialNumber: null,
+        manufacturerId: null,
+      },
+      miniPcie: {
+        typeId: null,
+        serialNumber: null,
+      },
+      ledBoardQrCode: null,
+      slotPinoutJson: {},
+    };
+
 
     const headers = [
       { title: "Controller Type", key: "controllerTypeName" },
@@ -584,7 +626,6 @@ export default {
         controllers.value = data;
       } catch (error) {
         console.error("Error fetching controllers:", error);
-        // show an error message to the user here or not..:(
       } finally {
         loading.value = false;
       }
@@ -722,6 +763,19 @@ export default {
       }
     }
 
+    async function fetchAll(endpoint, targetValue) {
+      try {
+        const response = await fetch(apiUrl + endpoint);
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        targetValue.value = data;
+      } catch (error) {
+        console.error("Error fetching " + endpoint + ": ", error);
+      }
+    }
+
     function editItem(item) {
       editedIndex.value = controllers.value.indexOf(item);
       Object.assign(editedItem, item);
@@ -756,9 +810,10 @@ export default {
 
     function saveAndContinue() {
       if (editedIndex.value > -1) {
-        Object.assign(controllers.value[editedIndex.value], editedItem);
+        // Object.assign(controllers.value[editedIndex.value], editedItem);
       } else {
-        controllers.value.push({ ...editedItem, id: crypto.randomUUID() });
+        // controllers.value.push({ ...editedItem, id: crypto.randomUUID() });
+        addNewController();
       }
     }
 
@@ -766,14 +821,14 @@ export default {
       if (newValue && !isFormDataLoaded.value) {
         try {
           await Promise.all([
-            fetchAllControllerTypes(),
-            fetchAllManufacturers(),
-            fetchAllPCIeModulesTypes(),
-            fetchAllM2ModulesTypes(),
-            fetchAllControllersPcbHwVersions(),
-            fetchAllProjects(),
-            fetchAllCustomers(),
-            fetchAllDisplayTypes(),
+            fetchAll("/projects", projects),
+            fetchAll("/customers", customers),
+            fetchAll("/display/types", displayTypes),
+            fetchAll("/controllers/types", controllerTypes),
+            fetchAll("/miniPcieModules/types", miniPcieModulesTypes),
+            fetchAll("/m2Modules/types", m2ModuleTypes),
+            fetchAll("/controllers/pcbHwVersions", controllersPcbHwVersions),
+            fetchAll("/manufacturers", manufacturers),
           ]);
           isFormDataLoaded.value = true;
         } catch (error) {
@@ -787,6 +842,7 @@ export default {
     });
 
     return {
+      apiUrl,
       search,
       selected,
       dialog,
