@@ -756,9 +756,10 @@ export default {
 
     function saveAndContinue() {
       if (editedIndex.value > -1) {
-        Object.assign(controllers.value[editedIndex.value], editedItem);
+        // Object.assign(controllers.value[editedIndex.value], editedItem);
       } else {
-        controllers.value.push({ ...editedItem, id: crypto.randomUUID() });
+        // controllers.value.push({ ...editedItem, id: crypto.randomUUID() });
+        addNewController();
       }
     }
 
